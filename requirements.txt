@@ -1,0 +1,13 @@
+openai
+tiktoken
+python-dotenv
+pyyaml
+git+https://github.com/openai/whisper.git
+ffmpeg-python
+langchain>=0.1.0
+langchain-community
+grpcio==1.56.0
+pymilvus>=2.5.0
+langchain-openai
+langchain-milvus==0.1.5
+streamlit
