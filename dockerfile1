@@ -1,0 +1,22 @@
+FROM milvusdb/milvus:v2.5.7
+
+# Create config directory
+RUN mkdir -p /milvus/configs && \
+    echo 'listen-client-urls: http://0.0.0.0:2379\nadvertise-client-urls: http://0.0.0.0:2379\nquota-backend-bytes: 4294967296\nauto-compaction-mode: revision\nauto-compaction-retention: "1000"' > /milvus/configs/embedEtcd.yaml && \
+    echo "# Extra config to override default milvus.yaml" > /milvus/configs/user.yaml
+
+# Set environment variables for embedded etcd and local storage
+ENV ETCD_USE_EMBED=true \
+    ETCD_DATA_DIR=/var/lib/milvus/etcd \
+    ETCD_CONFIG_PATH=/milvus/configs/embedEtcd.yaml \
+    COMMON_STORAGETYPE=local
+
+# Expose necessary ports
+EXPOSE 19530 9091 2379
+
+# Define healthcheck similar to original script
+HEALTHCHECK --interval=30s --timeout=20s --start-period=90s --retries=3 \
+  CMD curl -f http://localhost:9091/healthz || exit 1
+
+# Default command
+CMD ["milvus", "run", "standalone"]
